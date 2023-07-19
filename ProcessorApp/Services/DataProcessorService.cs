@@ -41,22 +41,30 @@ public class DataProcessorService : IDataProcessorService
 
     public async Task StartProcessing()
     {
-        var consumer = new EventingBasicConsumer(_channel);
-
-        consumer.Received += async (model, ea) =>
+        try
         {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            var consumer = new EventingBasicConsumer(_channel);
 
-            await SaveHashRecord(message);
-        };
+            consumer.Received += async (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
 
-        _channel.BasicQos(0, 4, false);
+                await SaveHashRecord(message);
+            };
 
-        Parallel.For(0, threadCount, _ =>
+            _channel.BasicQos(0, 4, false);
+
+            Parallel.For(0, threadCount, _ =>
+            {
+                _channel.BasicConsume(queue: "hashQueue", autoAck: false, consumer: consumer);
+            });
+        }
+        catch (Exception ex)
         {
-            _channel.BasicConsume(queue: "hashQueue", autoAck: false, consumer: consumer);
-        });
+            _logger.LogError(ex, "Exception occured during lsitening to the RabbitMQ");
+        }
+
     }
 
     private async Task SaveHashRecord(string message)
