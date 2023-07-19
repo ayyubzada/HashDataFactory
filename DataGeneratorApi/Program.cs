@@ -18,7 +18,6 @@ builder.Services
 var rabbitMqSection = builder.Configuration.GetSection(RabbitMqConfiguration.ConfigName);
 builder.Services.Configure<RabbitMqConfiguration>(rabbitMqSection);
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IHashRecordRepository, HashRecordRepository>();
 builder.Services.AddScoped<IHashService, HashService>();
 

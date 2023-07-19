@@ -13,7 +13,6 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(sqlConnectionString));
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IHashRecordRepository, HashRecordRepository>();
 
         var rabbitMqSection = builder.Configuration.GetSection(RabbitMqConfiguration.ConfigName);
