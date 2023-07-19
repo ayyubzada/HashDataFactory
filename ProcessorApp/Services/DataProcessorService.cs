@@ -45,33 +45,28 @@ public class DataProcessorService : IDataProcessorService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
 
-            await ProcessMessage(message);
+            await SaveHashRecord(message);
         };
 
         _channel.BasicConsume(queue: "hashQueue", autoAck: true, consumer: consumer);
     }
 
-    private async Task ProcessMessage(string message)
-    {
-        var tasks = new List<Task>();
-
-        for (int i = 0; i < threadCount; i++)
-        {
-            tasks.Add(Task.Run(() => SaveHashRecord(message)));
-        }
-
-        await Task.WhenAll(tasks);
-    }
-
     private async Task SaveHashRecord(string message)
     {
-        _logger.LogInformation($"Message({message}) accepted");
-        var hashRecord = new HashRecord
+        try
         {
-            Date = DateTime.UtcNow,
-            Sha1 = message
-        };
+            _logger.LogInformation($"Message({message}) accepted");
+            var hashRecord = new HashRecord
+            {
+                Date = DateTime.UtcNow,
+                Sha1 = message
+            };
 
-        await _hashRecordRepository.AddAsync(hashRecord);
+            await _hashRecordRepository.AddAsync(hashRecord);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during writing");
+        }
     }
 }

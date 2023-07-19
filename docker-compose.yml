@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: DataGeneratorApi/Dockerfile
     environment:
-      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=HashDB;User Id=sa;Password=p@ssw0rd123;"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=HashDB;User Id=sa;Password=p@ssw0rd123;TrustServerCertificate=True"
       RabbitMq__HostName: rabbitmq
     ports:
       - "8000:80"
@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: ProcessorApp/Dockerfile
     environment:
-      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=HashDB;User Id=sa;Password=p@ssw0rd123;"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=HashDB;User Id=sa;Password=p@ssw0rd123;TrustServerCertificate=True"
       RabbitMq__HostName: rabbitmq
     depends_on:
       - sqlserver

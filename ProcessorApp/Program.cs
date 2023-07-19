@@ -10,11 +10,13 @@ using SharedLibrary.Configs;
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((builder, services) =>
     {
+        var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        System.Console.WriteLine($"sqlConnectionString: {sqlConnectionString}");
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(sqlConnectionString));
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>(); 
-        services.AddScoped<IHashRecordRepository, HashRecordRepository>(); 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IHashRecordRepository, HashRecordRepository>();
 
         var rabbitMqSection = builder.Configuration.GetSection(RabbitMqConfiguration.ConfigName);
         services.Configure<RabbitMqConfiguration>(rabbitMqSection);
