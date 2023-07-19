@@ -25,6 +25,7 @@ public class HashesController : ControllerBase
     public async Task<IActionResult> GetData()
     {
         var reuslt = await _hashService.GetGroupedDataByDates();
+        if (reuslt == null) return BadRequest();
         return Ok(reuslt);
     }
 }
