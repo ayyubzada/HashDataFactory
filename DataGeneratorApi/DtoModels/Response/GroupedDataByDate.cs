@@ -11,10 +11,10 @@ public class GroupedDataByDate
 
 public class CountOfDataInTime
 {
-    public DateTime Date { get; set; }
+    public string Date { get; set; }
     public int Count { get; set; }
 
-    public CountOfDataInTime(DateTime date, int count)
+    public CountOfDataInTime(string date, int count)
     {
         Date = date;
         Count = count;

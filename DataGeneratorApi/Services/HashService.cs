@@ -42,7 +42,7 @@ public class HashService : IHashService
             var groupedData = await _hashRecordRepository.GetLatestRecordsAsGroupedByDateAsync(sinceDate);
 
             var hashList = groupedData
-                .Select(h => new CountOfDataInTime(h.Key, h.Count()));
+                .Select(h => new CountOfDataInTime(h.Key.ToString("yyyy-MM-dd"), h.Count()));
 
             _logger.LogInformation($"{hashList.Count()} grouped data was fetched");
             return new GroupedDataByDate(hashList);
