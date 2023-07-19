@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      SA_PASSWORD: "p@ssw0rd123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+      
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      
+  apiapp:
+    image: apiapp
+    build:
+      context: .
+      dockerfile: DataGeneratorApi/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=HashDB;User Id=sa;Password=p@ssw0rd123;"
+      RabbitMq__HostName: rabbitmq
+    ports:
+      - "8000:80"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+
+  processorapp:
+    image: processorapp
+    build:
+      context: .
+      dockerfile: ProcessorApp/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=HashDB;User Id=sa;Password=p@ssw0rd123;"
+      RabbitMq__HostName: rabbitmq
+    depends_on:
+      - sqlserver
+      - rabbitmq
