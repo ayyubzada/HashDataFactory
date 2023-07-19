@@ -13,6 +13,7 @@ namespace ProcessorApp.Services;
 public class DataProcessorService : IDataProcessorService
 {
     private readonly ILogger<DataProcessorService> _logger;
+    private readonly RabbitMqConfiguration _rabbitMqOConfiguration;
     private readonly IServiceProvider _serviceProvider;
     private readonly IHashRecordRepository _hashRecordRepository;
     private readonly IModel _channel;
@@ -26,12 +27,13 @@ public class DataProcessorService : IDataProcessorService
     {
         _logger = logger;
         _hashRecordRepository = hashRecordRepository;
+        _rabbitMqOConfiguration = rabbitMqOptions.Value;
 
-        var factory = new ConnectionFactory() { HostName = rabbitMqOptions.Value.HostName };
+        var factory = new ConnectionFactory() { HostName = _rabbitMqOConfiguration.HostName };
         var connection = factory.CreateConnection();
         _channel = connection.CreateModel();
         _channel.QueueDeclare(
-            queue: rabbitMqOptions.Value.QueueName,
+            queue: _rabbitMqOConfiguration.QueueName,
             durable: false,
             exclusive: false,
             autoDelete: false,
@@ -53,11 +55,11 @@ public class DataProcessorService : IDataProcessorService
                 await SaveHashRecord(message);
             };
 
-            _channel.BasicQos(0, 4, false);
+            _channel.BasicQos(0, threadCount, false);
 
             Parallel.For(0, threadCount, _ =>
             {
-                _channel.BasicConsume(queue: "hashQueue", autoAck: false, consumer: consumer);
+                _channel.BasicConsume(queue: _rabbitMqOConfiguration.QueueName, autoAck: false, consumer: consumer);
             });
         }
         catch (Exception ex)
