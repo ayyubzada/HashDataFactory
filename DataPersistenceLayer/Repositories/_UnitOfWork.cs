@@ -1,3 +1,4 @@
+using DataPersistenceLayer.Entities;
 using DataPersistenceLayer.Repositories.Abstractions;
 
 namespace DataPersistenceLayer.Repositories;
@@ -18,15 +19,10 @@ public class UnitOfWork : IUnitOfWork
         var type = typeof(T);
         if (!_repositories.ContainsKey(type))
         {
-            switch (typeof(T))
-            {
-                case IHashRecordRepository:
-                    _repositories[type] = new HashRecordRepository(_context);
-                    break;
-                default:
-                    _repositories[type] = new Repository<T>(_context);
-                    break;
-            }
+            if (type is HashRecord)
+                _repositories[type] = new HashRecordRepository(_context);
+            else
+                _repositories[type] = new Repository<T>(_context);
         }
 
         return (T)_repositories[type];

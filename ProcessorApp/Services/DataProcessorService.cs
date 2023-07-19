@@ -1,5 +1,6 @@
 using System.Text;
 using DataPersistenceLayer.Entities;
+using DataPersistenceLayer.Repositories;
 using DataPersistenceLayer.Repositories.Abstractions;
 using Microsoft.Extensions.Options;
 using ProcessorApp.Services.Abstractions;
@@ -12,17 +13,17 @@ namespace ProcessorApp.Services;
 public class DataProcessorService : IDataProcessorService
 {
     private readonly ILogger<DataProcessorService> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IHashRecordRepository _hashRecordRepository;
     private readonly IModel _channel;
     private const int threadCount = 4;
 
     public DataProcessorService(
         ILogger<DataProcessorService> logger,
-        IUnitOfWork unitOfWork,
+        IHashRecordRepository hashRecordRepository,
         IOptions<RabbitMqConfiguration> rabbitMqOptions)
     {
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        _hashRecordRepository = hashRecordRepository;
 
         var factory = new ConnectionFactory() { HostName = rabbitMqOptions.Value.HostName };
         var connection = factory.CreateConnection();
@@ -71,8 +72,6 @@ public class DataProcessorService : IDataProcessorService
             Sha1 = message
         };
 
-        var hashRecordRepository = _unitOfWork.GetRepository<IHashRecordRepository>();
-        await hashRecordRepository.AddAsync(hashRecord);
-        await _unitOfWork.SaveChangesAsync();
+        await _hashRecordRepository.AddAsync(hashRecord);
     }
 }

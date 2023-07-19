@@ -12,16 +12,17 @@ namespace DataGeneratorApi.Services;
 public class HashService : IHashService
 {
     private readonly ILogger<HashService> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IHashRecordRepository _hashRecordRepository;
     private readonly IModel _channel;
 
     public HashService(
         ILogger<HashService> logger,
-        IUnitOfWork unitOfWork,
-        IOptions<RabbitMqConfiguration> rabbitMqOptions)
+        IOptions<RabbitMqConfiguration> rabbitMqOptions,
+        IHashRecordRepository hashRecordRepository)
     {
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        _hashRecordRepository = hashRecordRepository;
+
         var factory = new ConnectionFactory() { HostName = rabbitMqOptions.Value.HostName };
         var connection = factory.CreateConnection();
         _channel = connection.CreateModel();
@@ -37,10 +38,8 @@ public class HashService : IHashService
     {
         try
         {
-            var hashRecordRepository = _unitOfWork.GetRepository<IHashRecordRepository>();
-
             var sinceDate = DateTime.UtcNow.AddYears(-1);
-            var groupedData = await hashRecordRepository.GetLatestRecordsAsGroupedByDateAsync(sinceDate);
+            var groupedData = await _hashRecordRepository.GetLatestRecordsAsGroupedByDateAsync(sinceDate);
 
             var hashList = groupedData
                 .Select(h => new CountOfDataInTime(h.Key, h.Count()));

@@ -1,3 +1,4 @@
+using DataPersistenceLayer.Entities;
 using DataPersistenceLayer.Repositories;
 using DataPersistenceLayer.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,12 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+        services.AddScoped<IHashRecordRepository, HashRecordRepository>(); 
 
         var rabbitMqSection = builder.Configuration.GetSection(RabbitMqConfiguration.ConfigName);
         services.Configure<RabbitMqConfiguration>(rabbitMqSection);
 
-        // Register the DataProcessorService as scoped instead of singleton
         services.AddScoped<IDataProcessorService, DataProcessorService>();
 
         services.AddHostedService<Worker>();

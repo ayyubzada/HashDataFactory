@@ -12,7 +12,7 @@ public class HashRecordRepository : Repository<HashRecord>, IHashRecordRepositor
 
     public async Task<IEnumerable<IGrouping<DateTime, HashRecord>>> GetLatestRecordsAsGroupedByDateAsync(DateTime sinceDate)
     {
-        return await _context.HashRecords
+        return await _dbSet
             .Where(h => h.Date >= sinceDate)
             .GroupBy(h => h.Date.Date)
             .ToListAsync();

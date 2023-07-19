@@ -3,19 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGeneratorApi", "DataGeneratorApi\DataGeneratorApi.csproj", "{18BC5B30-E301-40B4-A3E5-EAA324100BF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataGeneratorApi", "DataGeneratorApi\DataGeneratorApi.csproj", "{18BC5B30-E301-40B4-A3E5-EAA324100BF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessorApp", "ProcessorApp\ProcessorApp.csproj", "{127C0D40-C876-4F16-B551-68C6DD63B10E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessorApp", "ProcessorApp\ProcessorApp.csproj", "{127C0D40-C876-4F16-B551-68C6DD63B10E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPersistenceLayer", "DataPersistenceLayer\DataPersistenceLayer.csproj", "{B7AD2B8B-652C-4622-9C7C-1C00E57BC0BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPersistenceLayer", "DataPersistenceLayer\DataPersistenceLayer.csproj", "{B7AD2B8B-652C-4622-9C7C-1C00E57BC0BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedLibrary", "SharedLibrary\SharedLibrary.csproj", "{DFB3824D-290F-41DD-B04D-F64DDB10AA70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02322826-35A8-405C-80BD-BE647A0BBD90}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{18BC5B30-E301-40B4-A3E5-EAA324100BF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +34,15 @@ Global
 		{B7AD2B8B-652C-4622-9C7C-1C00E57BC0BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7AD2B8B-652C-4622-9C7C-1C00E57BC0BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7AD2B8B-652C-4622-9C7C-1C00E57BC0BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB3824D-290F-41DD-B04D-F64DDB10AA70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB3824D-290F-41DD-B04D-F64DDB10AA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB3824D-290F-41DD-B04D-F64DDB10AA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB3824D-290F-41DD-B04D-F64DDB10AA70}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {736E7A41-1AE3-4A67-8CC0-D82970D5A687}
 	EndGlobalSection
 EndGlobal
