@@ -18,6 +18,10 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<HashRecord>()
+            .Property(h => h.Id)
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<HashRecord>()
             .Property(h => h.Sha1)
             .IsRequired()
             .HasMaxLength(150);

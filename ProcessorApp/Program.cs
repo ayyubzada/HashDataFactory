@@ -1,4 +1,3 @@
-using DataPersistenceLayer.Entities;
 using DataPersistenceLayer.Repositories;
 using DataPersistenceLayer.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,6 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((builder, services) =>
     {
         var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        System.Console.WriteLine($"sqlConnectionString: {sqlConnectionString}");
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(sqlConnectionString));
 

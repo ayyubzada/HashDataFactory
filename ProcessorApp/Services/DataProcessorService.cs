@@ -13,6 +13,7 @@ namespace ProcessorApp.Services;
 public class DataProcessorService : IDataProcessorService
 {
     private readonly ILogger<DataProcessorService> _logger;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IHashRecordRepository _hashRecordRepository;
     private readonly IModel _channel;
     private const int threadCount = 4;
@@ -20,7 +21,8 @@ public class DataProcessorService : IDataProcessorService
     public DataProcessorService(
         ILogger<DataProcessorService> logger,
         IHashRecordRepository hashRecordRepository,
-        IOptions<RabbitMqConfiguration> rabbitMqOptions)
+        IOptions<RabbitMqConfiguration> rabbitMqOptions,
+        IServiceProvider serviceProvider)
     {
         _logger = logger;
         _hashRecordRepository = hashRecordRepository;
@@ -34,6 +36,7 @@ public class DataProcessorService : IDataProcessorService
             exclusive: false,
             autoDelete: false,
             arguments: null);
+        _serviceProvider = serviceProvider;
     }
 
     public async Task StartProcessing()
@@ -48,7 +51,12 @@ public class DataProcessorService : IDataProcessorService
             await SaveHashRecord(message);
         };
 
-        _channel.BasicConsume(queue: "hashQueue", autoAck: true, consumer: consumer);
+        _channel.BasicQos(0, 4, false);
+
+        Parallel.For(0, threadCount, _ =>
+        {
+            _channel.BasicConsume(queue: "hashQueue", autoAck: false, consumer: consumer);
+        });
     }
 
     private async Task SaveHashRecord(string message)
@@ -62,7 +70,14 @@ public class DataProcessorService : IDataProcessorService
                 Sha1 = message
             };
 
-            await _hashRecordRepository.AddAsync(hashRecord);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var hashRecordRepository = scope.ServiceProvider.GetRequiredService<IHashRecordRepository>();
+
+                await hashRecordRepository.AddAsync(hashRecord);
+                await dbContext.SaveChangesAsync();
+            }
         }
         catch (Exception ex)
         {
